@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="DishName">
+        <item>Menudo</item>
+        <item>Sinigang</item>
+        <item>FishFillet</item>
+        <item>Tonkatsu</item>
+        <item>Empanada</item>
+        <item>Tapsilog</item>
+        <item>Cornbeef</item>
+        <item>Shawarma</item>
+    </array>
+</resources>

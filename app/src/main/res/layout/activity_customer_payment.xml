@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context=".CustomerFoodPanel.CustomerPayment">
+
+    <include layout="@layout/payableorderstoolbar"
+        android:id="@+id/text1"
+        />
+
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/py2"
+        android:layout_below="@id/text1"
+        app:lottie_repeatCount="10"
+        app:lottie_repeatMode="reverse"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        app:lottie_autoPlay="true"
+        app:lottie_rawRes="@raw/animation69"
+
+        />
+
+
+    <TextView
+        android:layout_below="@id/py2"
+
+        android:id="@+id/py1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:text="Are you sure with your order?"
+        android:textColor="@color/Black"
+        android:textSize="25dp" />
+
+    <Button
+        android:id="@+id/cashPaymentButton"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_below="@id/py1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Confirm" />
+
+
+
+</RelativeLayout>

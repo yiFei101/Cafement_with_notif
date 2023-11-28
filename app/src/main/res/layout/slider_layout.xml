@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    app:flow_horizontalAlign="center">
+
+    <ImageView
+        android:id="@+id/titleImage"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="70dp"
+        android:src="@drawable/restaurant"/>
+
+    <TextView
+        android:id="@+id/texttitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@drawable/poppins"
+        android:text="Hello"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="28dp" />
+
+    <TextView
+        android:id="@+id/textdeccription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:fontFamily="@drawable/poppins_bold"
+        android:text="HELLO"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="16dp" />
+
+
+</LinearLayout>

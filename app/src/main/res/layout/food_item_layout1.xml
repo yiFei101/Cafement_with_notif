@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="16dp"
+    android:background="#F6F6F9"
+    android:orientation="vertical"
+    tools:context=".CustomerFoodPanel.OrderDish">
+
+
+    <include layout="@layout/toolbar" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="242dp"
+        android:layout_height="242dp"
+        android:layout_marginTop="20dp"
+        app:cardCornerRadius="121dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/app_name" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/food_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="25dp"
+        android:fontFamily="@font/nunito_semibold"
+        android:gravity="center"
+        android:text="Food Name"
+        android:textColor="@android:color/black"
+        android:textSize="28sp"
+        app:layout_constraintEnd_toEndOf="@+id/cardView"
+        app:layout_constraintStart_toStartOf="@+id/cardView"
+        app:layout_constraintTop_toBottomOf="@+id/cardView" />
+
+    <TextView
+        android:id="@+id/food_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="25dp"
+        android:fontFamily="@font/nunito_semibold"
+        android:gravity="center"
+        android:text="Price"
+        android:textColor="@color/colorPrimary"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/food_name"
+        app:layout_constraintTop_toBottomOf="@+id/food_name" />
+
+    <TextView
+        android:id="@+id/delivery_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/nunito_semibold"
+        android:text="Quantity:"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/food_price" />
+
+    <TextView
+        android:id="@+id/food_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/nunito"
+        android:text="the food is good"
+        android:textColor="#B3000000"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="@+id/delivery_info"
+        app:layout_constraintTop_toBottomOf="@+id/delivery_info" />
+
+    <TextView
+        android:id="@+id/return_policy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:fontFamily="@font/nunito_semibold"
+        android:text="Food Description"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/delivery_info"
+        app:layout_constraintTop_toBottomOf="@+id/delivery_info" />
+
+
+    <TextView
+        android:id="@+id/food_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/nunito"
+        android:text="OUR food is the best in sssssddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddssssssssssssssssssssssssssssssss"
+        android:textColor="#B3000000"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="@+id/return_policy"
+        app:layout_constraintTop_toBottomOf="@+id/return_policy" />
+
+
+
+    <TextView
+        android:id="@+id/return_policy1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:fontFamily="@font/nunito_semibold"
+        android:text="To order Food just click this ---"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/food_description"
+        app:layout_constraintTop_toBottomOf="@+id/food_description" />
+
+
+
+    <LinearLayout
+        android:id="@+id/number_btn_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/food_description"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
+        android:id="@+id/number_btn"
+        android:layout_width="75dp"
+        android:layout_height="25dp"
+        android:layout_gravity="bottom"
+        app:backGroundColor="#FA3E03"
+        app:backgroundDrawable="@drawable/elegant_btnshape"
+        tools:layout_editor_absoluteX="288dp"
+        tools:layout_editor_absoluteY="547dp"
+        tools:ignore="MissingConstraints" />
+</androidx.constraintlayout.widget.ConstraintLayout>

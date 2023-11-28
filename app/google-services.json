@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1077991553061",
+    "firebase_url": "https://udm-food-app-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "udm-food-app",
+    "storage_bucket": "udm-food-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1077991553061:android:b742c2956c79a36e41e7cc",
+        "android_client_info": {
+          "package_name": "com.example.loginauthentication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1077991553061-h9vs5fk7j3snsj5pmedamaq3sgefnurv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApEXT_xuxs6_7Yan-akyu2fBrgxUo4qMA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1077991553061-h9vs5fk7j3snsj5pmedamaq3sgefnurv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
