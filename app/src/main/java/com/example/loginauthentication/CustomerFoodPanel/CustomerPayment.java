@@ -70,6 +70,8 @@ public class CustomerPayment extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("StudentPaymentOrders").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(RandomUID).child("Dishes");
                 databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -123,41 +125,6 @@ public class CustomerPayment extends AppCompatActivity {
                                                     hashMap2.put("UserId", customerPaymentOrderss.getUserId());
                                                     FirebaseDatabase.getInstance().getReference("MerchantWaitingOrders").child(MerchantId).child(RandomUID).child("Dishes").child(dishid).setValue(hashMap2);
                                                 }
-                                                //for user token
-                                                DatabaseReference db1 = FirebaseDatabase.getInstance().getReference("Tokens").child(userID);
-                                                db1.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                        if (dataSnapshot.exists()) {
-                                                            currentUserToken = dataSnapshot.getValue(String.class);
-
-                                                        }
-                                                        else {
-                                                        }
-                                                    }
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError error) {
-                                                        Toast.makeText(v.getContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
-                                                    }
-                                                });
-
-                                                //for merchant token
-                                                DatabaseReference db2 = FirebaseDatabase.getInstance().getReference("Tokens").child(merchantID);
-                                                db2.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                        if (dataSnapshot.exists()) {
-                                                            merchantToken = dataSnapshot.getValue(String.class);
-                                                        }
-                                                        else {
-                                                        }
-                                                    }
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError error) {
-                                                        Toast.makeText(v.getContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
-                                                    }
-                                                });
-
 
                                                 DatabaseReference dataa = FirebaseDatabase.getInstance().getReference("StudentPaymentOrders").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(RandomUID).child("OtherInformation");
                                                 dataa.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -170,6 +137,59 @@ public class CustomerPayment extends AppCompatActivity {
                                                         hashMap3.put("Note", customerPaymentOrders11.getNote());
                                                         hashMap3.put("RandomUID", RandomUID);
                                                         hashMap3.put("Status", "Your order is waiting to be prepared by Merchant...");
+
+                                                        //for user name
+                                                        DatabaseReference db = FirebaseDatabase.getInstance().getReference("Student").child(userID);
+                                                        db.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                if (dataSnapshot.exists()) {
+                                                                    currentUserName = dataSnapshot.child("First Name").getValue(String.class);
+                                                                }
+                                                                else {
+                                                                }
+                                                            }
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                                Toast.makeText(v.getContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
+                                                            }
+                                                        });
+
+                                                        //for user token
+                                                        DatabaseReference db1 = FirebaseDatabase.getInstance().getReference("Tokens").child(userID);
+                                                        db1.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                if (dataSnapshot.exists()) {
+                                                                    currentUserToken = dataSnapshot.getValue(String.class);
+                                                                }
+                                                                else {
+                                                                }
+                                                            }
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                                Toast.makeText(v.getContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
+                                                            }
+                                                        });
+
+                                                        //for merchant token
+                                                        DatabaseReference db2 = FirebaseDatabase.getInstance().getReference("Tokens").child(merchantID);
+                                                        db2.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                if (dataSnapshot.exists()) {
+                                                                    merchantToken = dataSnapshot.getValue(String.class);
+                                                                }
+                                                                else {
+                                                                }
+                                                            }
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                                Toast.makeText(v.getContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
+                                                            }
+                                                        });
+
+
                                                         FirebaseDatabase.getInstance().getReference("MerchantWaitingOrders").child(MerchantId).child(RandomUID).child("OtherInformation").setValue(hashMap3).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
@@ -194,9 +214,9 @@ public class CustomerPayment extends AppCompatActivity {
 
                                                                                                             JSONObject data = new JSONObject();
                                                                                                             data.put(Constants.KEY_USER_ID, userID);
-                                                                                                            data.put(Constants.KEY_NAME, "New Order");
+                                                                                                            data.put(Constants.KEY_NAME, "Payment Successful");
                                                                                                             data.put(Constants.KEY_FCM_TOKEN, currentUserToken);
-                                                                                                            data.put(Constants.KEY_MESSAGE, "You have new order from "+currentUserName);
+                                                                                                            data.put(Constants.KEY_MESSAGE, currentUserName+" payment is successful");
 
                                                                                                             JSONObject body = new JSONObject();
                                                                                                             body.put(Constants.REMOTE_MSG_DATA, data);
@@ -286,7 +306,7 @@ public class CustomerPayment extends AppCompatActivity {
                             JSONArray results = responseJson.getJSONArray("result");
                             if(responseJson.getInt("failure") == 1){
                                 JSONObject error = (JSONObject) results.get(0);
-                                Toast.makeText(CustomerPayment.this, "Error.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(CustomerPayment.this,"Error.",Toast.LENGTH_LONG).show();
                                 return;
                             }
                         }
@@ -296,13 +316,13 @@ public class CustomerPayment extends AppCompatActivity {
                     //  showToast("Notification sent successfully");
 
                 }else{
-                    Toast.makeText(CustomerPayment.this, "Error.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(CustomerPayment.this,"Error: " + response.code(),Toast.LENGTH_LONG).show();
 
                 }
             }
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-                Toast.makeText(CustomerPayment.this, "Error.", Toast.LENGTH_LONG).show();
+                Toast.makeText(CustomerPayment.this,t.getMessage(),Toast.LENGTH_LONG).show();
             }
         });
 
