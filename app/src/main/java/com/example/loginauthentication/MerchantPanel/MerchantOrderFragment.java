@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment;
 import com.example.loginauthentication.R;
 
 public class MerchantOrderFragment extends Fragment {
-    TextView OrdertobePrepare, Preparedorders;
+    TextView OrdertobePrepare;
 
     @Nullable
     @Override
@@ -21,7 +21,6 @@ public class MerchantOrderFragment extends Fragment {
         getActivity().setTitle("Orders");
         View v = inflater.inflate(R.layout.fragment_merchant_orders, null);
         OrdertobePrepare=(TextView)v.findViewById(R.id.ordertobe);
-        Preparedorders=(TextView)v.findViewById(R.id.prepareorder);
 
         OrdertobePrepare.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -31,13 +30,7 @@ public class MerchantOrderFragment extends Fragment {
             }
         });
 
-        Preparedorders.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(getContext(),ChefPreparedOrder.class);
-                startActivity(intent);
-            }
-        });
+
 
 
         return v;

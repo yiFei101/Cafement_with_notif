@@ -53,12 +53,14 @@ public class ChefOrdertobePrepareView extends AppCompatActivity {
     private List<ChefWaitingOrders> chefWaitingOrdersList;
     private ChefOrdertobePrepareViewAdapter adapter;
     DatabaseReference reference;
-    String RandomUID, userid, merchantID, merchantName, merchantToken, userToken;
+    String RandomUID, userid;
+    String  merchantID, merchantName, merchantToken, userToken;
+
     TextView grandtotal, note, address;
     LinearLayout l1;
     Button Preparing;
     private ProgressDialog progressDialog;
-    private APIService apiService;
+  //  private APIService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +72,7 @@ public class ChefOrdertobePrepareView extends AppCompatActivity {
         address = findViewById(R.id.ad);
         l1 = findViewById(R.id.button1);
         Preparing = findViewById(R.id.preparing);
-        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+     //   apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
         progressDialog = new ProgressDialog(ChefOrdertobePrepareView.this);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setCancelable(false);
@@ -78,6 +80,8 @@ public class ChefOrdertobePrepareView extends AppCompatActivity {
         recyclerViewdish.setLayoutManager(new LinearLayoutManager(ChefOrdertobePrepareView.this));
         chefWaitingOrdersList = new ArrayList<>();
         CheforderdishesView();
+
+        merchantID = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
     private void CheforderdishesView() {
@@ -98,6 +102,8 @@ public class ChefOrdertobePrepareView extends AppCompatActivity {
 
                 } else {
                     l1.setVisibility(View.VISIBLE);
+
+
                     Preparing.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -114,7 +120,6 @@ public class ChefOrdertobePrepareView extends AppCompatActivity {
                                         HashMap<String, String> hashMap = new HashMap<>();
                                         String dishid = chefWaitingOrders.getDishId();
                                         userid = chefWaitingOrders.getUserId();
-                                        merchantID = chefWaitingOrders.getMerchantId();
                                         hashMap.put("MerchantId", chefWaitingOrders.getMerchantId());
                                         hashMap.put("DishId", chefWaitingOrders.getDishId());
                                         hashMap.put("DishName", chefWaitingOrders.getDishName());
@@ -133,17 +138,15 @@ public class ChefOrdertobePrepareView extends AppCompatActivity {
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             if (dataSnapshot.exists()) {
                                                 merchantName = dataSnapshot.child("First Name").getValue(String.class);
-                                            } else {
+                                            }
+                                            else {
                                             }
                                         }
-
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError error) {
-                                            Toast.makeText(v.getContext(), "Something went wrong.", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(v.getContext(), "Something went wrong.",Toast.LENGTH_LONG).show();
                                         }
                                     });
-
-
                                     //for user token
                                     DatabaseReference db1 = FirebaseDatabase.getInstance().getReference("Tokens").child(userid);
                                     db1.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -151,15 +154,16 @@ public class ChefOrdertobePrepareView extends AppCompatActivity {
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             if (dataSnapshot.exists()) {
                                                 userToken = dataSnapshot.getValue(String.class);
-                                            } else {
+                                            }
+                                            else {
                                             }
                                         }
-
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError error) {
-                                            Toast.makeText(v.getContext(), "Something went wrong.", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(v.getContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
                                         }
                                     });
+
 
                                     //for merchant token
                                     DatabaseReference db2 = FirebaseDatabase.getInstance().getReference("Tokens").child(merchantID);
@@ -168,16 +172,15 @@ public class ChefOrdertobePrepareView extends AppCompatActivity {
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             if (dataSnapshot.exists()) {
                                                 merchantToken = dataSnapshot.getValue(String.class);
-                                            } else {
+                                            }
+                                            else {
                                             }
                                         }
-
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError error) {
-                                            Toast.makeText(v.getContext(), "Something went wrong.", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(v.getContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
                                         }
                                     });
-
 
 
 
@@ -190,7 +193,8 @@ public class ChefOrdertobePrepareView extends AppCompatActivity {
                                             hashMap1.put("Address", chefWaitingOrders1.getAddress());
                                             hashMap1.put("GrandTotalPrice", chefWaitingOrders1.getGrandTotalPrice());
                                             hashMap1.put("RandomUID", RandomUID);
-                                            hashMap1.put("Status", "Merchant is preparing your Order...");
+                                            hashMap1.put("Status", "Your Order is Ready to Pick Up...");
+
                                             FirebaseDatabase.getInstance().getReference("MerchantFinalOrders").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(RandomUID).child("OtherInformation").setValue(hashMap1).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
@@ -208,20 +212,19 @@ public class ChefOrdertobePrepareView extends AppCompatActivity {
                                                                                 @Override
                                                                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                                                                    try {
+                                                                                    try{
                                                                                         JSONArray tokens = new JSONArray();
                                                                                         tokens.put(userToken);
 
                                                                                         JSONObject data = new JSONObject();
                                                                                         data.put(Constants.KEY_USER_ID, merchantID);
-                                                                                        data.put(Constants.KEY_NAME, "Preparing Order");
+                                                                                        data.put(Constants.KEY_NAME, "Done Order");
                                                                                         data.put(Constants.KEY_FCM_TOKEN, merchantToken);
-                                                                                        data.put(Constants.KEY_MESSAGE, merchantName + " is preparing your Order.");
+                                                                                        data.put(Constants.KEY_MESSAGE, merchantName+" is sure that your order is Ready to Pickup.");
 
                                                                                         JSONObject body = new JSONObject();
                                                                                         body.put(Constants.REMOTE_MSG_DATA, data);
                                                                                         body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
-
 
                                                                                         sendNotification(body.toString());
                                                                                         Toast.makeText(v.getContext(),"Notification Sent",Toast.LENGTH_LONG).show();
@@ -230,17 +233,16 @@ public class ChefOrdertobePrepareView extends AppCompatActivity {
                                                                                         Toast.makeText(v.getContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
                                                                                     }
 
-                                                                                    ReusableCodeForAll.ShowAlert(v.getContext(),"","The Order is preparing");
-
+                                                                                    ReusableCodeForAll.ShowAlert(getApplicationContext(),"","Wait for the Customer to Pickup The Order");
 
                                                                                 }
 
 
                                                                                 @Override
                                                                                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                                                }
-                                                                            });
 
+                                                                                }
+                                                                            });
 
                                                                         }
                                                                     });
@@ -300,40 +302,42 @@ public class ChefOrdertobePrepareView extends AppCompatActivity {
         });
     }
 
-    private void sendNotification(String messageBody) {
+    private void sendNotification(String messageBody){
         ApiClient.getClient().create(ApiService.class).sendMessage(
                 Constants.getRemoteMsgHeaders(),
                 messageBody
         ).enqueue(new Callback<String>() {
             @Override
             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                if (response.isSuccessful()) {
-                    try {
-                        if (response.body() != null) {
+                if(response.isSuccessful()){
+                    try{
+                        if(response.body() != null){
                             JSONObject responseJson = new JSONObject(response.body());
                             JSONArray results = responseJson.getJSONArray("result");
-                            if (responseJson.getInt("failure") == 1) {
+                            if(responseJson.getInt("failure") == 1){
                                 JSONObject error = (JSONObject) results.get(0);
-                                Toast.makeText(ChefOrdertobePrepareView.this, "Error.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(),"Error.",Toast.LENGTH_LONG).show();
                                 return;
                             }
                         }
-                    } catch (JSONException e) {
+                    }catch(JSONException e){
                         e.printStackTrace();
                     }
                     //  showToast("Notification sent successfully");
 
-                } else {
-                    Toast.makeText(ChefOrdertobePrepareView.this, "Error: " + response.code(), Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getApplicationContext(),"Error: " + response.code(),Toast.LENGTH_LONG).show();
 
                 }
             }
-
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-                Toast.makeText(ChefOrdertobePrepareView.this, t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
             }
         });
 
     }
+
+
+
 }

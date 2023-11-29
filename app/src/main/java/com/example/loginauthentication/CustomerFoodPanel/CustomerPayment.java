@@ -1,8 +1,5 @@
 package com.example.loginauthentication.CustomerFoodPanel;
 
-import static java.security.AccessController.getContext;
-
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,9 +12,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.loginauthentication.CustomerFoodPanel_BottomNavigation;
-import com.example.loginauthentication.MerchantPanel.ChefPreparedOrderView;
 import com.example.loginauthentication.R;
-import com.example.loginauthentication.ReusableCodeForAll;
 import com.example.loginauthentication.SendNotification.APIService;
 import com.example.loginauthentication.SendNotification.Data;
 import com.example.loginauthentication.SendNotification.MyResponse;
@@ -49,11 +44,7 @@ import retrofit2.Response;
 public class CustomerPayment extends AppCompatActivity {
 
     TextView  CashPayment;
-    String RandomUID, MerchantId, currentUserToken,merchantToken,currentUserName,userID;
-    String  merchantID;
-    private ProgressDialog progressDialog;
-
-
+    String RandomUID, merchantId, userID, currentUserName,currentUserToken,merchantToken;
     private APIService apiService;
 
     @Override
@@ -64,13 +55,13 @@ public class CustomerPayment extends AppCompatActivity {
         CashPayment = (TextView) findViewById(R.id.cashPaymentButton);
         RandomUID = getIntent().getStringExtra("RandomUID");
 
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
 
 
         CashPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("StudentPaymentOrders").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(RandomUID).child("Dishes");
                 databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -80,6 +71,7 @@ public class CustomerPayment extends AppCompatActivity {
                             final CustomerPaymentOrders customerPaymentOrders = dataSnapshot1.getValue(CustomerPaymentOrders.class);
                             HashMap<String, String> hashMap = new HashMap<>();
                             String dishid = customerPaymentOrders.getDishId();
+                            merchantId = customerPaymentOrders.getMerchantId();
                             hashMap.put("MerchantId", customerPaymentOrders.getMerchantId());
                             hashMap.put("DishId", customerPaymentOrders.getDishId());
                             hashMap.put("DishName", customerPaymentOrders.getDishName());
@@ -90,6 +82,62 @@ public class CustomerPayment extends AppCompatActivity {
                             hashMap.put("UserId", customerPaymentOrders.getUserId());
                             FirebaseDatabase.getInstance().getReference("StudentFinalOrders").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(RandomUID).child("Dishes").child(dishid).setValue(hashMap);
                         }
+
+                        //for user name
+                        DatabaseReference db = FirebaseDatabase.getInstance().getReference("Student").child(userID);
+                        db.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    currentUserName = dataSnapshot.child("First Name").getValue(String.class);
+                                    // Toast.makeText(getApplicationContext(),"currentUserName" + currentUserName,Toast.LENGTH_LONG).show();
+                                }
+                                else {
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(getApplicationContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        //for user token
+                        DatabaseReference db1 = FirebaseDatabase.getInstance().getReference("Tokens").child(userID);
+                        db1.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    currentUserToken = dataSnapshot.getValue(String.class);
+                                    // Toast.makeText(getApplicationContext(),"currentUserToken" + currentUserToken,Toast.LENGTH_LONG).show();
+                                }
+                                else {
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(getApplicationContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+                        //for merchant token
+                        DatabaseReference db2 = FirebaseDatabase.getInstance().getReference("Tokens").child(merchantId);
+                        db2.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    merchantToken = dataSnapshot.getValue(String.class);
+                                    //  Toast.makeText(getApplicationContext(),"merchantToken" + merchantToken,Toast.LENGTH_LONG).show();
+                                }
+                                else {
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(getApplicationContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+
+
                         DatabaseReference data = FirebaseDatabase.getInstance().getReference("StudentPaymentOrders").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(RandomUID).child("OtherInformation");
                         data.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -114,7 +162,7 @@ public class CustomerPayment extends AppCompatActivity {
                                                     final CustomerPaymentOrders customerPaymentOrderss = snapshot.getValue(CustomerPaymentOrders.class);
                                                     HashMap<String, String> hashMap2 = new HashMap<>();
                                                     String dishid = customerPaymentOrderss.getDishId();
-                                                    MerchantId = customerPaymentOrderss.getMerchantId();
+
                                                     hashMap2.put("Merchant", customerPaymentOrderss.getMerchantId());
                                                     hashMap2.put("DishId", customerPaymentOrderss.getDishId());
                                                     hashMap2.put("DishName", customerPaymentOrderss.getDishName());
@@ -123,9 +171,8 @@ public class CustomerPayment extends AppCompatActivity {
                                                     hashMap2.put("RandomUID", RandomUID);
                                                     hashMap2.put("TotalPrice", customerPaymentOrderss.getTotalPrice());
                                                     hashMap2.put("UserId", customerPaymentOrderss.getUserId());
-                                                    FirebaseDatabase.getInstance().getReference("MerchantWaitingOrders").child(MerchantId).child(RandomUID).child("Dishes").child(dishid).setValue(hashMap2);
+                                                    FirebaseDatabase.getInstance().getReference("MerchantWaitingOrders").child(merchantId).child(RandomUID).child("Dishes").child(dishid).setValue(hashMap2);
                                                 }
-
                                                 DatabaseReference dataa = FirebaseDatabase.getInstance().getReference("StudentPaymentOrders").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(RandomUID).child("OtherInformation");
                                                 dataa.addListenerForSingleValueEvent(new ValueEventListener() {
                                                     @Override
@@ -137,66 +184,13 @@ public class CustomerPayment extends AppCompatActivity {
                                                         hashMap3.put("Note", customerPaymentOrders11.getNote());
                                                         hashMap3.put("RandomUID", RandomUID);
                                                         hashMap3.put("Status", "Your order is waiting to be prepared by Merchant...");
-
-                                                        //for user name
-                                                        DatabaseReference db = FirebaseDatabase.getInstance().getReference("Student").child(userID);
-                                                        db.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                            @Override
-                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                                if (dataSnapshot.exists()) {
-                                                                    currentUserName = dataSnapshot.child("First Name").getValue(String.class);
-                                                                }
-                                                                else {
-                                                                }
-                                                            }
-                                                            @Override
-                                                            public void onCancelled(@NonNull DatabaseError error) {
-                                                                Toast.makeText(v.getContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
-                                                            }
-                                                        });
-
-                                                        //for user token
-                                                        DatabaseReference db1 = FirebaseDatabase.getInstance().getReference("Tokens").child(userID);
-                                                        db1.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                            @Override
-                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                                if (dataSnapshot.exists()) {
-                                                                    currentUserToken = dataSnapshot.getValue(String.class);
-                                                                }
-                                                                else {
-                                                                }
-                                                            }
-                                                            @Override
-                                                            public void onCancelled(@NonNull DatabaseError error) {
-                                                                Toast.makeText(v.getContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
-                                                            }
-                                                        });
-
-                                                        //for merchant token
-                                                        DatabaseReference db2 = FirebaseDatabase.getInstance().getReference("Tokens").child(merchantID);
-                                                        db2.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                            @Override
-                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                                if (dataSnapshot.exists()) {
-                                                                    merchantToken = dataSnapshot.getValue(String.class);
-                                                                }
-                                                                else {
-                                                                }
-                                                            }
-                                                            @Override
-                                                            public void onCancelled(@NonNull DatabaseError error) {
-                                                                Toast.makeText(v.getContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
-                                                            }
-                                                        });
-
-
-                                                        FirebaseDatabase.getInstance().getReference("MerchantWaitingOrders").child(MerchantId).child(RandomUID).child("OtherInformation").setValue(hashMap3).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        FirebaseDatabase.getInstance().getReference("MerchantWaitingOrders").child(merchantId).child(RandomUID).child("OtherInformation").setValue(hashMap3).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
-                                                                FirebaseDatabase.getInstance().getReference("MerchantPaymentOrders").child(MerchantId).child(RandomUID).child("Dishes").removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                FirebaseDatabase.getInstance().getReference("MerchantPaymentOrders").child(merchantId).child(RandomUID).child("Dishes").removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                     @Override
                                                                     public void onComplete(@NonNull Task<Void> task) {
-                                                                        FirebaseDatabase.getInstance().getReference("MerchantPaymentOrders").child(MerchantId).child(RandomUID).child("OtherInformation").removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                        FirebaseDatabase.getInstance().getReference("MerchantPaymentOrders").child(merchantId).child(RandomUID).child("OtherInformation").removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                             @Override
                                                                             public void onComplete(@NonNull Task<Void> task) {
                                                                                 FirebaseDatabase.getInstance().getReference("StudentPaymentOrders").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(RandomUID).child("Dishes").removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -205,34 +199,32 @@ public class CustomerPayment extends AppCompatActivity {
                                                                                         FirebaseDatabase.getInstance().getReference("StudentPaymentOrders").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(RandomUID).child("OtherInformation").removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                             @Override
                                                                                             public void onSuccess(Void aVoid) {
-                                                                                                FirebaseDatabase.getInstance().getReference().child("Tokens").child(MerchantId).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                                                FirebaseDatabase.getInstance().getReference().child("Tokens").child(merchantId).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
                                                                                                     @Override
                                                                                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                                                                         try{
                                                                                                             JSONArray tokens = new JSONArray();
-                                                                                                            tokens.put(merchantToken);
+                                                                                                            tokens.put(merchantToken); // receiverToken
 
                                                                                                             JSONObject data = new JSONObject();
-                                                                                                            data.put(Constants.KEY_USER_ID, userID);
-                                                                                                            data.put(Constants.KEY_NAME, "Payment Successful");
-                                                                                                            data.put(Constants.KEY_FCM_TOKEN, currentUserToken);
-                                                                                                            data.put(Constants.KEY_MESSAGE, currentUserName+" payment is successful");
+                                                                                                            data.put(Constants.KEY_USER_ID, userID); //senderID
+                                                                                                            data.put(Constants.KEY_NAME, "PaymentMode  Confirmed"); //Notification Title
+                                                                                                            data.put(Constants.KEY_FCM_TOKEN, currentUserToken); //senderToken
+                                                                                                            data.put(Constants.KEY_MESSAGE, currentUserName+" paymentmode is Confirmed"); //Notification message
 
                                                                                                             JSONObject body = new JSONObject();
                                                                                                             body.put(Constants.REMOTE_MSG_DATA, data);
                                                                                                             body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
 
                                                                                                             sendNotification(body.toString());
+                                                                                                            Toast.makeText(getApplicationContext(),"Notification Sent.",Toast.LENGTH_LONG).show();
+
 
 
                                                                                                         }catch(Exception exception){
-                                                                                                            Toast.makeText(v.getContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
+                                                                                                            Toast.makeText(getApplicationContext(),"Something went wrong.",Toast.LENGTH_LONG).show();
                                                                                                         }
-
-                                                                                                        progressDialog.dismiss();
-                                                                                                        ReusableCodeForAll.ShowAlert(v.getContext(), "", "Your Order has been Ready for Pickup ");
                                                                                                     }
-
 
                                                                                                     @Override
                                                                                                     public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -241,7 +233,27 @@ public class CustomerPayment extends AppCompatActivity {
                                                                                                 });
 
                                                                                             }
+                                                                                        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onSuccess(Void aVoid) {
+                                                                                                AlertDialog.Builder builder = new AlertDialog.Builder(CustomerPayment.this);
+                                                                                                builder.setMessage("Payment mode confirmed, Now you can track your order.");
+                                                                                                builder.setCancelable(false);
+                                                                                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                                                                    @Override
+                                                                                                    public void onClick(DialogInterface dialog, int which) {
 
+                                                                                                        dialog.dismiss();
+                                                                                                        Intent b = new Intent(CustomerPayment.this, CustomerFoodPanel_BottomNavigation.class);
+                                                                                                        b.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                                                                        startActivity(b);
+                                                                                                        finish();
+
+                                                                                                    }
+                                                                                                });
+                                                                                                AlertDialog alert = builder.create();
+                                                                                                alert.show();
+                                                                                            }
                                                                                         });
                                                                                     }
                                                                                 });
@@ -306,7 +318,7 @@ public class CustomerPayment extends AppCompatActivity {
                             JSONArray results = responseJson.getJSONArray("result");
                             if(responseJson.getInt("failure") == 1){
                                 JSONObject error = (JSONObject) results.get(0);
-                                Toast.makeText(CustomerPayment.this,"Error.",Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(),"Error.",Toast.LENGTH_LONG).show();
                                 return;
                             }
                         }
@@ -316,19 +328,17 @@ public class CustomerPayment extends AppCompatActivity {
                     //  showToast("Notification sent successfully");
 
                 }else{
-                    Toast.makeText(CustomerPayment.this,"Error: " + response.code(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Error: " + response.code(),Toast.LENGTH_LONG).show();
 
                 }
             }
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-                Toast.makeText(CustomerPayment.this,t.getMessage(),Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
             }
         });
 
     }
-
 }
-
 
 

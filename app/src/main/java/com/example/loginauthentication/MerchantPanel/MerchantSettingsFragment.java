@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.loginauthentication.ChefFoodPanel_BottomNavigation1;
 import com.example.loginauthentication.CustomerFoodPanel_BottomNavigation;
 import com.example.loginauthentication.MainMenu;
 import com.example.loginauthentication.R;
@@ -55,13 +56,15 @@ public class MerchantSettingsFragment extends Fragment {
                                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
                         FirebaseDatabase.getInstance().getReference("MerchantWaitingOrders")
                                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
+                        FirebaseDatabase.getInstance().getReference("StudentFinalOrders")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
 
                         AlertDialog.Builder food = new AlertDialog.Builder(getActivity());
                         food.setMessage("Your Order History has been Deleted");
                         food.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                startActivity(new Intent(getActivity(), CustomerFoodPanel_BottomNavigation.class));                                        }
+                                startActivity(new Intent(getActivity(), ChefFoodPanel_BottomNavigation1.class));                                        }
                         });
                         AlertDialog alertt = food.create();
                         alertt.show();
